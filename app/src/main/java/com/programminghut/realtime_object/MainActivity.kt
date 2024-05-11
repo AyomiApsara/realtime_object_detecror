@@ -105,20 +105,22 @@ class MainActivity : AppCompatActivity() {
                             val scaleFactorX = w / 320
                             val scaleFactorY = h / 320
 
-                            canvas.drawRect(
-                                RectF(
-                                    location.left * scaleFactorX,
-                                    location.top * scaleFactorY,
-                                    location.right * scaleFactorX,
-                                    location.bottom * scaleFactorY
-                                ), paint
+                            val rectF = RectF(
+                                location.left * scaleFactorX,
+                                location.top * scaleFactorY,
+                                location.right * scaleFactorX,
+                                location.bottom * scaleFactorY
                             )
+                            canvas.drawRect(rectF, paint)
                             paint.style = Paint.Style.FILL
-                            val textToShow = "$category: ${String.format("%.2f", score)}" // Concatenate category and score
+                            val textToShow = "$category: ${String.format("%.2f", score * 100)}%" // Concatenate category and score
+
+                            // Draw text near the boundary box
+                            val textWidth = paint.measureText(textToShow)
                             canvas.drawText(
                                 textToShow,
-                                location.left * w,
-                                (location.top * h) - paint.textSize, // Adjust the vertical position of the text
+                                rectF.left + (rectF.width() - textWidth) / 2,
+                                rectF.bottom + paint.textSize, // Adjust the vertical position of the text
                                 paint
                             )
                         }
@@ -127,6 +129,7 @@ class MainActivity : AppCompatActivity() {
 
                 imageView.setImageBitmap(mutable)
             }
+
         }
 
         cameraManager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
